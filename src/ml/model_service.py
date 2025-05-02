@@ -1,11 +1,9 @@
-import logging
+from loguru import logger
 from pathlib import Path
 import torch
 
 from src.ml.models.habit_predictor_model import HabitPredictor
 
-
-logger = logging.getLogger('ml.model_service')
 
 class HabitPredictorService:
     def __init__(self):

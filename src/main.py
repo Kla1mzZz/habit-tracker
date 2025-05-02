@@ -1,4 +1,4 @@
-import logging
+from loguru import logger
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
@@ -8,14 +8,10 @@ from starlette.middleware.cors import CORSMiddleware
 from src.api.v1.routers.habit_router import router as habit_router
 from src.api.v1.routers.auth_router import router as auth_router
 
-from src.core.logging import configure_logging
 from src.core.config import settings
 from src.database import db_manager
 from src.core.exceptions.handler import setup_exception_handlers
 from src.ml.model_service import model_service
-
-
-logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
@@ -37,8 +33,6 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 def get_application() -> FastAPI:
-    configure_logging(settings.app.logging_level)
-
     app = FastAPI(lifespan=lifespan, **settings.app.model_dump())
 
     app.add_middleware(

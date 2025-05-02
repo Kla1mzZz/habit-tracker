@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 
 
 class CustomHTTPException(HTTPException):

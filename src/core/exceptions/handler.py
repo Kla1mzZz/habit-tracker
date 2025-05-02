@@ -1,4 +1,4 @@
-import logging
+from loguru import logger
 from typing import Dict, Any
 
 from fastapi import FastAPI, status
@@ -9,9 +9,6 @@ from sqlalchemy.exc import (
     IntegrityError,
     OperationalError,
 )
-
-
-logger = logging.getLogger(__name__)
 
 
 def setup_exception_handlers(app: FastAPI):

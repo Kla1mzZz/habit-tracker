@@ -12,6 +12,7 @@ from src.core.logging import configure_logging
 from src.core.config import settings
 from src.database import db_manager
 from src.core.exceptions.handler import setup_exception_handlers
+from src.ml.model_service import model_service
 
 
 logger = logging.getLogger(__name__)
@@ -19,6 +20,15 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    try:
+        logger.info('Initializing ML model')
+        model_service.load_model()
+        app.state.model_service = model_service
+        logger.info('Model loaded successfully')
+    except Exception as e:
+        logger.critical(f'Failed to load model: {str(e)}')
+        raise
+    
     yield
 
     logger.info('Shutting down the application...')

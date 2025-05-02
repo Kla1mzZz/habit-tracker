@@ -4,7 +4,7 @@ import pandas as pd
 from torch.utils.data import TensorDataset, DataLoader
 from tqdm import tqdm
 
-from models.predict_model import model, optimizer, loss_func
+from models.habit_predictor_model import model, optimizer, loss_func
 
 
 path_to_train_data = (

@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.database import db_manager
@@ -11,8 +11,7 @@ from src.core.utils.security import (
     verify_password,
     create_access_token,
 )
-from src.schemas.auth import AuthResponse
-from src.schemas.user import UserRegister
+from src.schemas.auth import AuthResponse, AuthRegister
 from src.core.config import settings
 from src.core.exceptions.auth import (
     InvalidCredentialsException,
@@ -25,7 +24,7 @@ repo = UserRepo()
 
 @router.post('/register', response_model=AuthResponse)
 async def register(
-    user_data: UserRegister, session: AsyncSession = Depends(db_manager.get_session)
+    user_data: AuthRegister, session: AsyncSession = Depends(db_manager.get_session)
 ):
     user_username = await repo.get_by_username(session, user_data.username)
     if user_username:

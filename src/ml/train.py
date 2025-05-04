@@ -1,17 +1,13 @@
-from pathlib import Path
 import torch
 import pandas as pd
 from torch.utils.data import TensorDataset, DataLoader
 from tqdm import tqdm
 
 from models.habit_predictor_model import model, optimizer, loss_func
+from src.core.config import settings
 
 
-path_to_train_data = (
-    Path(__file__).resolve(strict=True).parent / 'data' / 'habits_data.csv'
-)
-
-df = pd.read_csv(path_to_train_data)
+df = pd.read_csv(settings.ml.path_to_train_data)
 
 X = df[['day_of_week', 'habit_today', 'streak_days', 'notes']].values
 y = df['motivation'].values
@@ -40,11 +36,4 @@ for e in epochs_tqdm:
     epochs_tqdm.refresh()
 
 
-path_save_model = (
-    Path(__file__).resolve(strict=True).parent
-    / 'models'
-    / 'trained'
-    / 'predict_model_weights.pth'
-)
-
-torch.save(model.state_dict(), str(path_save_model))
+torch.save(model.state_dict(), str(settings.ml.path_to_model_weights))

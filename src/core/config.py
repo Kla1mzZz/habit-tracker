@@ -1,8 +1,9 @@
-from pydantic import BaseModel, computed_field, SecretStr
+from typing import List
+from pathlib import Path
+from pydantic import BaseModel, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
 
-from typing import List
 
 load_dotenv()
 
@@ -21,13 +22,20 @@ class DatabaseConfig(BaseModel):
     max_overflow: int = 10
 
     @computed_field
-    @property
     def url(self) -> str:
         return f'postgresql+{self.driver}://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}'
 
 
 class Prefix(BaseModel):
     v1: str = '/api/v1'
+
+
+class MLConfig(BaseModel):
+    base_path: Path = Path(__file__).resolve(strict=True).parent.parent / 'ml'
+    path_to_model_weights: Path = (
+        base_path / 'models' / 'trained' / 'predict_model_weights.pth'
+    )
+    path_to_train_data: Path = base_path / 'data' / 'habits_data.csv'
 
 
 class AppConfig(BaseModel):
@@ -43,16 +51,15 @@ class AppConfig(BaseModel):
 
     prefix: Prefix = Prefix()
 
-    logging_level: str = 'info'
-
     secret_key: str = ''
     algorithm: str = 'HS256'
-    acces_token_expire_minutes: int = 30
+    access_token_expire_minutes: int = 30
 
 
 class Settings(BaseSettings):
     database: DatabaseConfig = DatabaseConfig()
     app: AppConfig = AppConfig()
+    ml: MLConfig = MLConfig()
 
     model_config = SettingsConfigDict(env_nested_delimiter='__')
 

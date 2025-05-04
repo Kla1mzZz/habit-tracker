@@ -19,12 +19,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     try:
         logger.info('Initializing ML model')
         model_service.load_model()
-        app.state.model_service = model_service
         logger.info('Model loaded successfully')
     except Exception as e:
         logger.critical(f'Failed to load model: {str(e)}')
         raise
-    
+
     yield
 
     logger.info('Shutting down the application...')

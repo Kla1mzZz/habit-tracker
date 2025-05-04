@@ -1,19 +1,13 @@
 from loguru import logger
-from pathlib import Path
 import torch
 
+from src.core.config import settings
 from src.ml.models.habit_predictor_model import HabitPredictor
 
 
 class HabitPredictorService:
     def __init__(self):
         self.model = HabitPredictor()
-        self.path_to_model = (
-            Path(__file__).resolve(strict=True).parent
-            / 'models'
-            / 'trained'
-            / 'predict_model_weights.pth'
-        )
         self._device = self._get_device()
 
     def _get_device(self) -> torch.device:
@@ -21,7 +15,9 @@ class HabitPredictorService:
 
     def load_model(self):
         state_dict = torch.load(
-            self.path_to_model, map_location=self._device, weights_only=True
+            settings.ml.path_to_model_weights,
+            map_location=self._device,
+            weights_only=True,
         )
 
         self.model.load_state_dict(state_dict)
@@ -38,19 +34,20 @@ class HabitPredictorService:
             input_tensor = torch.tensor(
                 [[days_this_week, habit_today, streak_days, notes_this_week]],
                 dtype=torch.float32,
-                device=self._device
+                device=self._device,
             )
-            
+
             with torch.no_grad():
                 prediction = self.model(input_tensor)
                 return prediction.item()
-                
+
         except Exception as e:
             logger.error(f'Prediction failed: {str(e)}')
             raise
 
 
 model_service = HabitPredictorService()
+
 
 def get_model_service() -> HabitPredictorService:
     return model_service

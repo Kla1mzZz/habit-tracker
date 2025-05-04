@@ -38,7 +38,7 @@ async def register(
 
     creating_user = await repo.create(session, user_data, hashed_password)
 
-    access_token_expires = timedelta(minutes=settings.app.acces_token_expire_minutes)
+    access_token_expires = timedelta(minutes=settings.app.access_token_expire_minutes)
     access_token = create_access_token(
         data={'sub': str(creating_user.id)}, expires_delta=access_token_expires
     )
@@ -55,7 +55,7 @@ async def login(
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise InvalidCredentialsException()
 
-    access_token_expires = timedelta(minutes=settings.app.acces_token_expire_minutes)
+    access_token_expires = timedelta(minutes=settings.app.access_token_expire_minutes)
     access_token = create_access_token(
         data={'sub': str(user.id)}, expires_delta=access_token_expires
     )
